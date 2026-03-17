@@ -1,0 +1,15 @@
+{
+    "server": {
+      "host" : "127.0.0.1",
+      "port" : 8080
+    },
+    "proxy": {
+      "target"  : "https://example.com",
+      "timeout" : 5
+    },
+    "cache": {
+      "enable"   : true,
+      "ttl"      : 60,
+      "max_size" : 1000
+    }
+}
