@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 import requests, argparse, json
 
 HEADERS = {
@@ -17,13 +17,15 @@ def main():
 
     with open("config.json", "r") as f:
         config = json.load(f)
-        return config
+        config = json.dumps(config, indent=4)
+        print(config)
 
     app = Flask(__name__)
 
     @app.route('/', defaults={"path":""})
     @app.route("/<path:path>")
     def proxy(path):
+        url = 
 
 if __name__ == "__main__":
     main()
