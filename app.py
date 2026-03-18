@@ -9,34 +9,21 @@ HEADERS = {
     "Connection": "keep-alive"
 }
 
-def app():
-    app = Flask(__name__)
-
-    @app.route('/', defaults={"path":""})
-    @app.route("/<path:path>")
-    def proxy(path):
-        #тут requests
-
-    return app
-
-def args_parser():
+def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-p", "--port", type=int, required=True)
     parser.add_argument("-o", "--origin", type=str, required=True)
     args = parser.parse_args()
 
-    return args
-
-
-def json_loader():
     with open("config.json", "r") as f:
         config = json.load(f)
         return config
 
-def main():
-    args_parser()
-    json_loader()
-    app()
+    app = Flask(__name__)
+
+    @app.route('/', defaults={"path":""})
+    @app.route("/<path:path>")
+    def proxy(path):
 
 if __name__ == "__main__":
     main()
