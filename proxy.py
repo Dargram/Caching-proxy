@@ -1,7 +1,15 @@
 from flask import Flask, request, Response
-import requests, argparse, json
+
+import requests
+import argparse
+import json
+import logging
 
 def main():
+
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s \033[36m[%(levelname)s]\033[0m %(message)s")
+    logger = logging.getLogger(__name__)
+
     parser = argparse.ArgumentParser()
     parser.add_argument("-p", "--port", type=int, required=True)
     parser.add_argument("-o", "--origin", type=str)
@@ -21,8 +29,8 @@ def main():
         headers.pop("Host", None)
 
         resp = requests.request(url=url, headers=headers, params=request.args, method=request.method)
-        print("Status code:", resp.status_code)
-        print("\033[31m Final .url:", url, "\033[0m")
+        logger.info(f"Status code: \033[36m{resp.status_code}\033[0m")
+        print("Final url:", url)
 
         return Response(resp.content, resp.status_code)
 
