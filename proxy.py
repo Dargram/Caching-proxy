@@ -17,15 +17,22 @@ def main():
 
     with open("config.json", "r") as f:
         config = json.load(f)
-        config = json.dumps(config, indent=4)
-        print(config)
 
+    target = config['proxy']['target']
     app = Flask(__name__)
 
     @app.route('/', defaults={"path":""})
     @app.route("/<path:path>")
     def proxy(path):
-        url = 
+        query = request.query_string.decode()
+        url = f"{args.origin}/{path}"
 
+        if query:
+            url += f"?{query}"
+
+        resp = requests.get(url=url, headers=HEADERS)
+        return resp.text
+
+    app.run()
 if __name__ == "__main__":
     main()
