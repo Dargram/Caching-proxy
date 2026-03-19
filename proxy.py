@@ -29,8 +29,7 @@ def main():
         headers.pop("Host", None)
 
         resp = requests.request(url=url, headers=headers, params=request.args, method=request.method)
-        logger.info(f"Status code: \033[36m{resp.status_code}\033[0m")
-        print("Final url:", url)
+        logger.info(f"Final url: {url} | \033[32mStatus code: [{resp.status_code}]\033[0m")
 
         return Response(resp.content, resp.status_code)
 
