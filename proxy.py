@@ -21,7 +21,7 @@ def main():
     config = load_config()
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("-p", "--port", type=int, required=True)
+    parser.add_argument("-p", "--port", type=int)
     parser.add_argument("-o", "--origin", type=str)
     args = parser.parse_args()
 
@@ -36,7 +36,7 @@ def main():
         headers.pop("Host", None)
 
         resp = requests.request(url=url, headers=headers, params=request.args, method=request.method)
-        logger.info(f"\033[31mFinal url: {url}\033[0m | \033[32mStatus code: [{resp.status_code}]\033[0m")
+        logger.info(f"\033[32mFinal url: {url} -> Status code: [{resp.status_code}]\033[0m")
 
         return Response(resp.content, resp.status_code)
 
