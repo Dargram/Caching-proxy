@@ -11,7 +11,7 @@ def load_config():
 
 def logging_options():
     logging.basicConfig(level=logging.INFO,
-        format="%(asctime)s \033[36m[%(levelname)s]\033[0m %(message)s")
+        format="%(asctime)s \033[34m[%(levelname)s]\033[0m %(message)s")
 
     return logging.getLogger(__name__)
 
@@ -25,22 +25,34 @@ def main():
     parser.add_argument("-o", "--origin", type=str)
     args = parser.parse_args()
 
+
     origin = config['proxy']['target']
+    host_ip = config['server']['host']
+
+    print(f" * Server running on {host_ip}:{args.port}")
     app = Flask(__name__)
 
     @app.route('/', defaults={"path":""}, methods=["GET"])
     @app.route("/<path:path>", methods=["GET"])
     def proxy(path):
-        url = f"{args.origin or origin}/{path}"
+        target_url = f"{args.origin or origin}/{path}"
         headers = dict(request.headers)
         headers.pop("Host", None)
 
-        resp = requests.request(url=url, headers=headers, params=request.args, method=request.method)
-        logger.info(f"\033[32mFinal url: {url} -> Status code: [{resp.status_code}]\033[0m")
+        client_ip = request.remote_addr
+        method = request.method
 
+        resp = requests.request(url=target_url, headers=headers, params=request.args, method=method)
+        logger.info(
+            f"\033[93m{client_ip}\033[0m "
+            f"\033[94m{method}\033[0m "
+            f"\033[97m->\033[0m  "
+            f"\033[96m{target_url}\033[0m "
+            f"\033[92m[{resp.status_code}]\033[0m "
+        )
         return Response(resp.content, resp.status_code)
 
-    app.run(port=args.port)
+    app.run(host="0.0.0.0",port=args.port)
 
 if __name__ == "__main__":
     main()
