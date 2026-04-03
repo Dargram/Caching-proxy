@@ -1,6 +1,6 @@
-from flask import Flask, request, Response
+from quart import Quart, request, Response
 
-import requests
+import httpx
 import argparse
 import json
 import logging
@@ -30,29 +30,42 @@ def main():
     host_ip = config['server']['host']
 
     print(f" * Server running on {host_ip}:{args.port}")
-    app = Flask(__name__)
+    app = Quart(__name__)
 
     @app.route('/', defaults={"path":""}, methods=["GET"])
     @app.route("/<path:path>", methods=["GET"])
-    def proxy(path):
+    async def proxy(path):
+
         target_url = f"{args.origin or origin}/{path}"
         headers = dict(request.headers)
         headers.pop("Host", None)
 
         client_ip = request.remote_addr
         method = request.method
+        scheme = request.scheme
 
-        resp = requests.request(url=target_url, headers=headers, params=request.args, method=method)
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            resp = await client.request(
+                url=target_url,
+                headers=headers,
+                params=request.args,
+                method=method
+            )
         logger.info(
+            f"\033[91m{scheme}\033[0m "
             f"\033[93m{client_ip}\033[0m "
             f"\033[94m{method}\033[0m "
             f"\033[97m->\033[0m  "
             f"\033[96m{target_url}\033[0m "
             f"\033[92m[{resp.status_code}]\033[0m "
         )
-        return Response(resp.content, resp.status_code)
 
-    app.run(host="0.0.0.0",port=args.port)
+        return Response(
+            resp.content,
+            resp.status_code
+        )
+
+    app.run(host="0.0.0.0", port=args.port)
 
 if __name__ == "__main__":
     main()
