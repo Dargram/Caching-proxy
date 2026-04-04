@@ -13,6 +13,13 @@ def logging_options():
     logging.basicConfig(level=logging.INFO,
         format="%(asctime)s \033[34m[%(levelname)s]\033[0m %(message)s")
 
+
+    logging.getLogger("hypercorn.error").disabled = True
+    logging.getLogger("hypercorn.access").disabled = True
+    logging.getLogger("uvicorn.error").disabled = True
+    logging.getLogger("werkzeug").disabled = True
+    logging.getLogger("httpx").disabled = True
+
     return logging.getLogger(__name__)
 
 def main():
@@ -38,11 +45,12 @@ def main():
 
         target_url = f"{args.origin or origin}/{path}"
         headers = dict(request.headers)
+
+
         headers.pop("Host", None)
 
         client_ip = request.remote_addr
         method = request.method
-        scheme = request.scheme
 
         async with httpx.AsyncClient(timeout=10.0) as client:
             resp = await client.request(
@@ -52,7 +60,6 @@ def main():
                 method=method
             )
         logger.info(
-            f"\033[91m{scheme}\033[0m "
             f"\033[93m{client_ip}\033[0m "
             f"\033[94m{method}\033[0m "
             f"\033[97m->\033[0m  "
