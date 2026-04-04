@@ -6,8 +6,9 @@ import json
 import logging
 
 def load_config():
-    with open("config.json", "r") as f:
-        return json.load(f)
+    with open("config.json", mode="r") as f:
+        data = json.loads(f.read())
+    return data
 
 def logging_options():
     logging.basicConfig(level=logging.INFO,
@@ -45,8 +46,9 @@ def main():
 
         target_url = f"{args.origin or origin}/{path}"
         headers = dict(request.headers)
-
-
+        print("\033[91m")
+        print(json.dumps(headers, indent=4))
+        print("\033[0m")
         headers.pop("Host", None)
 
         client_ip = request.remote_addr
