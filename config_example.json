@@ -1,0 +1,10 @@
+{
+    "server": {
+      "host" : "http://57.0.0.0",
+      "port" : 5000
+    },
+    "proxy": {
+      "target"  : "http://example.com",
+      "timeout" : 5
+    }
+}

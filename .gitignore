@@ -1,0 +1,11 @@
+# ignore virual environment
+venv
+venv/
+
+# ignore cache files
+__pycache__/
+*.pyc
+
+# ignore config(because project have config_json.example)
+config.json
+
